@@ -16,7 +16,7 @@ import ProcessSection from '@/components/ProcessSection';
 import FaqSection from '@/components/FaqSection';
 import Footer from '@/components/Footer';
 
-// Add framer-motion package
+// Import CSS
 import '../index.css';
 
 const Index = () => {
@@ -32,36 +32,24 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, []);
   
-  const openChat = () => {
-    setIsChatOpen(true);
-  };
-  
-  const closeChat = () => {
-    setIsChatOpen(false);
-  };
+  const openChat = () => setIsChatOpen(true);
+  const closeChat = () => setIsChatOpen(false);
   
   const handleRequestQuote = () => {
     window.open('https://wa.me/message/your-whatsapp-number', '_blank');
   };
   
-  // Loading animation variants
-  const loadingVariants = {
-    initial: { opacity: 1 },
-    exit: { 
-      opacity: 0,
-      transition: { duration: 0.8, ease: 'easeInOut' }
-    }
-  };
-  
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
       {/* Loading Screen */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isLoading && (
           <motion.div
-            variants={loadingVariants}
-            initial="initial"
-            exit="exit"
+            initial={{ opacity: 1 }}
+            exit={{ 
+              opacity: 0,
+              transition: { duration: 0.8, ease: 'easeInOut' }
+            }}
             className="fixed inset-0 bg-dark z-50 flex flex-col items-center justify-center"
           >
             <div className="relative">
@@ -111,7 +99,7 @@ const Index = () => {
       <FloatingButtons openChat={openChat} />
       
       {/* ChatBot */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isChatOpen && <ChatBot isOpen={isChatOpen} onClose={closeChat} />}
       </AnimatePresence>
     </div>
