@@ -23,24 +23,6 @@ const ParticleBackground: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
-    // Set canvas to full screen
-    const setCanvasSize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initParticles();
-    };
-    
-    window.addEventListener('resize', setCanvasSize);
-    setCanvasSize();
-    
-    // Track mouse position
-    const handleMouseMove = (e: MouseEvent) => {
-      mouse.current.x = e.clientX;
-      mouse.current.y = e.clientY;
-    };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    
     // Initialize particles
     const initParticles = () => {
       particles.current = [];
@@ -65,6 +47,42 @@ const ParticleBackground: React.FC = () => {
         });
       }
     };
+    
+    // Set canvas to full screen
+    const setCanvasSize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
+    };
+    
+    // Connect nearby particles with lines
+    const connectParticles = (particle: Particle, index: number) => {
+      for (let i = index + 1; i < particles.current.length; i++) {
+        const dx = particle.x - particles.current[i].x;
+        const dy = particle.y - particles.current[i].y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 100) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(123, 97, 255, ${0.2 - distance / 500})`;
+          ctx.lineWidth = 0.5;
+          ctx.moveTo(particle.x, particle.y);
+          ctx.lineTo(particles.current[i].x, particles.current[i].y);
+          ctx.stroke();
+        }
+      }
+    };
+    
+    window.addEventListener('resize', setCanvasSize);
+    setCanvasSize();
+    
+    // Track mouse position
+    const handleMouseMove = (e: MouseEvent) => {
+      mouse.current.x = e.clientX;
+      mouse.current.y = e.clientY;
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
     
     // Animation function
     const animate = () => {
@@ -112,24 +130,6 @@ const ParticleBackground: React.FC = () => {
       });
       
       animationFrameId.current = requestAnimationFrame(animate);
-    };
-    
-    // Connect nearby particles with lines
-    const connectParticles = (particle: Particle, index: number) => {
-      for (let i = index + 1; i < particles.current.length; i++) {
-        const dx = particle.x - particles.current[i].x;
-        const dy = particle.y - particles.current[i].y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        if (distance < 100) {
-          ctx.beginPath();
-          ctx.strokeStyle = `rgba(123, 97, 255, ${0.2 - distance / 500})`;
-          ctx.lineWidth = 0.5;
-          ctx.moveTo(particle.x, particle.y);
-          ctx.lineTo(particles.current[i].x, particles.current[i].y);
-          ctx.stroke();
-        }
-      }
     };
     
     // Start animation
